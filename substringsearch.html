@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="error.js"> </script>
+		<title> OCDAP SubStringSearch Practice </title>
+		<script>
+			//attribute list from eclipse java file
+			var subString = prompt("Please type the subString you would like to search for:"); //holds user's subString to be found
+			var subArray = subString.split(""); //converts String to charArray
+			
+			var bigArray; //holds randomly generated characters; find subString in here
+			var displayArray; //string displayed for user; subString in capitals and larger text
+			var indexFound = []; //indexFound[i] is the ith occurence of subString
+			var count = 0; //number of times subString found
+			final var bigNum = 459; //how long bigString is
+			
+			//generates bigString
+			function randomString()
+			{
+				for (p=0; p<=bigNum; p++)
+				{
+					//local variables
+					var letterIndex = 0; //integer representing a, t, c, or g
+					var randLetter = ""; //stores random letter
+					var bigString = ""; //holds String version of generated letters
+					
+					//generates random number from 1-4; rounded down
+					letterIndex = Math.floor((Math.random()*4)+1); 
+					
+					//sets letters to numbers generated
+					if (letterIndex == 1) {randLetter = "a";}
+					else if (letterIndex == 2) {randLetter = "t";}
+					else if (letterIndex == 3) {randLetter = "c";}
+					else {randLetter = "g";}
+					
+					//create String of letters
+					var bigString = bigString + randLetter;
+				}
+				
+				//convert String of letters to charArray
+				bigArray = bigString.split("");
+			}
+			
+			//looks thru bigArray for all instances of user input
+			//stores starting index values of subString locations in indexFound[]?
+			function findSubString()
+			{
+				//looks through all 459 characters
+				for (i=0; i<bigNum; i++)
+				{
+					var match = true; //starting value
+					//looks through all subString characters
+					for (j=0; j<subArray.length; j++)
+					{
+						//if part of user input found in generated array
+						if (bigArray[i+j] == subArray[j]) //why is it i+j?
+						{
+							//??
+							//need to know when at end of match
+							//found[i] = true ???
+						}
+						
+						else
+						{
+							match = false;
+							//do something so goes to next one?? or will it by self?
+						}
+					}
+				}
+			}
+			
+			//
+			function writeFound()
+			{
+				
+			}
+		</script>
+	</head>
+	
+	<body>
+		<h1>OCDAP SubStringSearch Practice </h1>
+		
+		<script>
+			//call randomString()
+			randomString();
+			
+			//display bigArray at certain size on page
+			document.writeln("Generated string: ");
+			for (j=0; j<bigNum; j++) //prints all characters in bigArray
+			{
+				
+			}
+		</script>
+	</body>
+</html>
