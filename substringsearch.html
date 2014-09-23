@@ -3,17 +3,6 @@
 	<head>
 		<script src="error.js"> </script>
 		<title> OCDAP SubStringSearch Practice </title>
-		
-		<!--
-		<style>
-			p.edited {
-				width: 100em;
-				border: 1px solid #000000;
-				word-wrap: break-word;
-			}
-		</style>
-		-->
-		
 		<script>
 			//attribute list from eclipse java file
 			var subString = prompt("Please type the sub-string you would like to search for:"); //holds user's subString to be found
@@ -67,8 +56,6 @@
 					{
 						//if current character does not match character in subArray
 						if (bigArray[i+j] != subArray[j]) {looking = false;}
-						//document.writeln(bigArray[i+j] + " " + subArray[j] + " " + looking);
-						//else {looking = false;}
 					}
 					//inner loop ends if a mismatch (looking = false) -> goes on to next i
 					//or found complete match (looking still = true) -> store in array of positions found, then go to next i
@@ -97,10 +84,10 @@
 				//goes through length of posFound[]
 				for (h=0; h<count; h++)
 				{
-					document.write(posFound[h] + ", ");
+					document.write(posFound[h] + "&nbsp;&nbsp;&nbsp;"); //&nbsp; = space
 					
 					//if h is in the last slot of posFound[]
-					if (h == count-1){document.write(posFound[h]);}
+					//if (h == count-1){document.write(posFound[h]);}
 				}
 				document.writeln("<br /><br />");
 				
@@ -119,43 +106,37 @@
 			//writes out the generated sequence with markers to show where sub-string instances are
 			function writeFound()
 			{
-				var endPos; //hold index number of where the end of a sub-string instance is
+				var startPos = 0; //index number of starting index
 				
-				document.writeln("Edited sequence:<br />");
+				document.writeln("Edited sequence :<br />");
 				
 				//goes through all 456 characters
 				for (w=0; w<bigNum; w++)
 				{
-					//goes through all instances of sub-string
-					for (f=0; f<count; f++)
+					//if the current character's index value matches a posFound[] value
+					if (w == posFound[startPos])
 					{
-						//if the current character's index value matches a posFound[] value
-						if (w == posFound[f])
-						{
-							document.write("'<'");
-							endPos = w + (subLength-1); //sets endPos to the value of the last character in the sub-string
-						}
+						document.write("<span style=\"font-size: 200%\"> &lt;"); // &lt; = <
 					}
 					
 					//continues writing out characters in the generated sequence
 					document.write(bigArray[w]);
 					
-					//if the current character's index value matches the endPos value
-					if (w == endPos)
+					//if the current character's index value matches the end position
+					if (w == posFound[startPos] + (subLength-1))
 					{
-						document.write("'>'");
+						document.write("&gt;</span>"); //&gt; = >
+						startPos++;
+					}
+					
+					//moves to new line after 50 characters
+					if ((w+1)%50 == 0)
+					{
+						document.writeln("<br />");
 					}
 				}
 				document.writeln("<br />");
 			}
-			
-			/*
-			function editPara()
-			{
-				var compactPara = document.getElementById("edited");
-				compactPara.firstChild.nodeValue = writeFound(); //need an actual var for this?
-			}
-			*/
 		</script>
 	</head>
 	
@@ -173,14 +154,7 @@
 			displayArrays();
 			
 			//call writeFound()
-			writeFound();
-			
-			//editPara();
+			writeFound();	
 		</script>
-		
-		<!--
-		<p id="edited">
-		</p>
-		-->
 	</body>
 </html>
