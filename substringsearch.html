@@ -3,16 +3,30 @@
 	<head>
 		<script src="error.js"> </script>
 		<title> OCDAP SubStringSearch Practice </title>
+		
+		<!--
+		<style>
+			p.edited {
+				width: 100em;
+				border: 1px solid #000000;
+				word-wrap: break-word;
+			}
+		</style>
+		-->
+		
 		<script>
 			//attribute list from eclipse java file
-			var subString = prompt("Please type the subString you would like to search for:"); //holds user's subString to be found
-			var subArray = subString.split(""); //converts String to charArray
+			var subString = prompt("Please type the sub-string you would like to search for:"); //holds user's subString to be found
+			var subArray = subString.split(""); //converts String to String array
+			var subLength = subArray.length; //length of subArray
 			
-			var bigArray; //holds randomly generated characters; find subString in here
-			var displayArray; //string displayed for user; subString in capitals and larger text
-			var indexFound = []; //indexFound[i] is the ith occurence of subString
+			var bigString = ""; //holds String version of generated letters
+			var bigArray = []; //holds randomly generated characters; find subString in here
+			
+			//var displayArray = []; //string displayed for user; subString in capitals and larger text
+			var posFound = []; //posFound[i] is the ith occurence of subString
 			var count = 0; //number of times subString found
-			final var bigNum = 459; //how long bigString is
+			var bigNum = 459; //how long bigString is
 			
 			//generates bigString
 			function randomString()
@@ -22,7 +36,6 @@
 					//local variables
 					var letterIndex = 0; //integer representing a, t, c, or g
 					var randLetter = ""; //stores random letter
-					var bigString = ""; //holds String version of generated letters
 					
 					//generates random number from 1-4; rounded down
 					letterIndex = Math.floor((Math.random()*4)+1); 
@@ -34,46 +47,115 @@
 					else {randLetter = "g";}
 					
 					//create String of letters
-					var bigString = bigString + randLetter;
+					bigString = bigString + randLetter;
 				}
 				
-				//convert String of letters to charArray
+				//convert String of letters to String array
 				bigArray = bigString.split("");
 			}
 			
-			//looks thru bigArray for all instances of user input
+			//looks thru bigArray for all instances of subArray
 			//stores starting index values of subString locations in indexFound[]?
 			function findSubString()
 			{
 				//looks through all 459 characters
-				for (i=0; i<bigNum; i++)
+				for (i=0; i<(bigNum-subLength); i++) //make sure i+j not off array length
 				{
-					var match = true; //starting value
+					var looking = true;
 					//looks through all subString characters
-					for (j=0; j<subArray.length; j++)
+					for (j=0; j<subLength && looking; j++)
 					{
-						//if part of user input found in generated array
-						if (bigArray[i+j] == subArray[j]) //why is it i+j?
-						{
-							//??
-							//need to know when at end of match
-							//found[i] = true ???
-						}
-						
-						else
-						{
-							match = false;
-							//do something so goes to next one?? or will it by self?
-						}
+						//if current character does not match character in subArray
+						if (bigArray[i+j] != subArray[j]) {looking = false;}
+						//document.writeln(bigArray[i+j] + " " + subArray[j] + " " + looking);
+						//else {looking = false;}
+					}
+					//inner loop ends if a mismatch (looking = false) -> goes on to next i
+					//or found complete match (looking still = true) -> store in array of positions found, then go to next i
+					if (looking)
+					{
+						posFound[count] = i;
+						count++;
 					}
 				}
 			}
 			
-			//
+			//displays subString and generated string using array storage
+			function displayArrays()
+			{
+				document.writeln("Your sub-string:<br />"); //.writeln() not working to put on new line?
+				
+				//goes through length of subArray[]
+				for (h=0; h<subLength; h++)
+				{
+					document.write(subArray[h]);
+				}
+				document.writeln("<br /><br />"); 
+				
+				document.writeln("Instances of your sub-string found at indexes:<br />");
+				
+				//goes through length of posFound[]
+				for (h=0; h<count; h++)
+				{
+					document.write(posFound[h] + ", ");
+					
+					//if h is in the last slot of posFound[]
+					if (h == count-1){document.write(posFound[h]);}
+				}
+				document.writeln("<br /><br />");
+				
+				//debug
+				/*
+				document.writeln("Generated sequence:<br />");
+				
+				for (h=0; h<bigNum; h++)
+				{
+					document.write(bigArray[h]);
+				}
+				document.writeln("<br /><br />");
+				*/
+			}
+	
+			//writes out the generated sequence with markers to show where sub-string instances are
 			function writeFound()
 			{
+				var endPos; //hold index number of where the end of a sub-string instance is
 				
+				document.writeln("Edited sequence:<br />");
+				
+				//goes through all 456 characters
+				for (w=0; w<bigNum; w++)
+				{
+					//goes through all instances of sub-string
+					for (f=0; f<count; f++)
+					{
+						//if the current character's index value matches a posFound[] value
+						if (w == posFound[f])
+						{
+							document.write("'<'");
+							endPos = w + (subLength-1); //sets endPos to the value of the last character in the sub-string
+						}
+					}
+					
+					//continues writing out characters in the generated sequence
+					document.write(bigArray[w]);
+					
+					//if the current character's index value matches the endPos value
+					if (w == endPos)
+					{
+						document.write("'>'");
+					}
+				}
+				document.writeln("<br />");
 			}
+			
+			/*
+			function editPara()
+			{
+				var compactPara = document.getElementById("edited");
+				compactPara.firstChild.nodeValue = writeFound(); //need an actual var for this?
+			}
+			*/
 		</script>
 	</head>
 	
@@ -84,12 +166,21 @@
 			//call randomString()
 			randomString();
 			
-			//display bigArray at certain size on page
-			document.writeln("Generated string: ");
-			for (j=0; j<bigNum; j++) //prints all characters in bigArray
-			{
-				
-			}
+			//call findSubString()
+			findSubString();
+			
+			//call displayGen()
+			displayArrays();
+			
+			//call writeFound()
+			writeFound();
+			
+			//editPara();
 		</script>
+		
+		<!--
+		<p id="edited">
+		</p>
+		-->
 	</body>
 </html>
