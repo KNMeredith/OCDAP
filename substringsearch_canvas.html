@@ -97,7 +97,7 @@
 				}
 			}
 			
-			//displays subString and generated string using array storage
+			//displays subString and its instances indexes
 			function displayArrays()
 			{
 				document.writeln("Your sub-string:<br />"); //.writeln() not working to put on new line?
@@ -125,10 +125,7 @@
 			//draws generated sequence with markers to show where sub-string instances are
 			function drawFound()
 			{
-				//can't make canvas inside script -> have to do it outside
-				//before page loads or after? -> if put before, canvas will be made before document.write stuff -> do after?
-				
-				//sets canvasP as element to be edited
+				//sets canvasS as element to be edited
 				var canvasS = document.getElementById('searchCanvas');
 			
 				//use to get CanvasRenderingConext2D -> needed to draw
@@ -139,8 +136,8 @@
 				contextS.font = 'normal 15pt Calibri';
 				
 				var startPos = 0; //index number of starting index
-				var canvasPosX = 10; //starting x position value
-				var canvasPosY = 90; //starting y position value
+				var canvasPosX = 10; //x position relative to canvas of first character in sequence
+				var canvasPosY = 90; //y position relative to canvas of first character in sequence
 				var spacingX = 10; //amount of space in pixels between each character on x-axis
 				var spacingY = 30; //amount of space in pixels between characters in original string versus complementary string
 				
@@ -207,6 +204,7 @@
 							alert("I drew the boxes for this 2nd line or later instance.");
 						}
 						//document.write("<span style=\"font-size: 200%\"> &lt;"); // &lt; = <
+						startPos++;
 					}
 					
 					//continues drawing out characters in generated sequence
@@ -254,13 +252,15 @@
 		<h1>OCDAP SubStringSearch Practice </h1>
 		
 		<script>
-			//call randomString()
+			//generates bigString and compString 
+			//uses those Strings to make bigArray and compArray
 			randomString();
 			
-			//call findSubString()
+			//looks thru bigArray for all instances of subArray
+			//stores starting index values of subString locations in indexFound[]
 			findSubString();
 			
-			//call displayGen()
+			//displays subString and its instances indexes
 			displayArrays();
 		</script>
 		
@@ -271,7 +271,7 @@
 				style="border:1px solid black;"> </canvas>
 		
 		<script>
-			//call drawFound()
+			//draws generated sequence with markers to show where sub-string instances are
 			drawFound();
 		</script>
 	</body>
