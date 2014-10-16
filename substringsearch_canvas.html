@@ -100,7 +100,7 @@
 			//displays subString and its instances indexes
 			function displayArrays()
 			{
-				document.writeln("Your sub-string:<br />"); //.writeln() not working to put on new line?
+				document.writeln("Your sub-string:<br />");
 				
 				//goes through length of subArray[]
 				for (h=0; h<subLength; h++)
@@ -115,14 +115,11 @@
 				for (h=0; h<count; h++)
 				{
 					document.write(posFound[h] + "&nbsp;&nbsp;&nbsp;"); //&nbsp; = space
-					
-					//if h is in the last slot of posFound[]
-					//if (h == count-1){document.write(posFound[h]);}
 				}
 				document.writeln("<br /><br />");
 			}
 	
-			//draws generated sequence with markers to show where sub-string instances are
+			//draws generated sequence with highlight boxes to show where sub-string instances are
 			function drawFound()
 			{
 				//sets canvasS as element to be edited
@@ -135,75 +132,42 @@
 				//style = normal(default), italic, or bold
 				contextS.font = 'normal 15pt Calibri';
 				
-				var startPos = 0; //index number of starting index
+				var startPos = 0; //index of current instance
 				var canvasPosX = 10; //x position relative to canvas of first character in sequence
 				var canvasPosY = 90; //y position relative to canvas of first character in sequence
 				var spacingX = 10; //amount of space in pixels between each character on x-axis
 				var spacingY = 30; //amount of space in pixels between characters in original string versus complementary string
+				var spacingLineGap = 150; //amount of space in pixels between first row of sequence 
 				
-				/* not working
-				var moveX = canvasPosX + (spacingX*pullBack); //calculates x position where character should be
-				var moveY = canvasPosY + spacingY; //calculates y position where complementary character should be
-				*/
-		
+				
+				var moveX = canvasPosX; //x position where current character should be
+				var moveY = canvasPosY; //y position where current character should be
+				
 				var pullBack = 0; //acts like w, except will be set back to 0 if new line needs to start
 				
-				contextS.fillText('Edited sequence:', canvasPosX, 15); //will have to force the next text down using x,y instead of <br />
+				var highlightWidth = (subLength*10)-3; //width of rectangle depends on how long subString is
+				var highlightHeight = 10; //assuming each character is about 10px high
 				
-				//document.writeln("Edited sequence :<br />");
-				
-				//*DRAW RECTANGLE (if apply, have to check), THEN CHARACTER*
-				//*PROBLEM: Only wants to draw one rectangle, no matter what row it is on (i.e. if first instance was at 108, will draw that, but none else*
+				contextS.fillText('Edited sequence:', canvasPosX, 15);
 				
 				//goes through all 456 characters
 				for (w=0; w<bigNum; w++)
-				{				
+				{		
+					//x position of current character
+					moveX = canvasPosX + (spacingX*pullBack);
+					
 					//if the current character's index value matches a posFound[] value
 					if (w == posFound[startPos])
 					{
-						//debug
-						alert("I'm at an instance of subString");
-						
-						//if current character is on first line
-						if (w > -1 && w < 94)
-						{
-							//debug
-							alert("I've found an instance on the first line.");
+						//draws rectangle where subString characters will be drawn
+						contextS.fillStyle = "cyan";
+						contextS.fillRect(moveX, moveY-highlightHeight, highlightWidth, highlightHeight); //for original strand
 							
-							//should probably make a separate fxn for this...
-							//draws rectangle where subString characters will be drawn
-							contextS.fillStyle = "cyan";
-							contextS.fillRect(canvasPosX + (spacingX*pullBack), canvasPosY-spacingX, 27, 10); //for original strand
+						//draws rectangle where complementary subString characters will be drawn
+						contextS.fillStyle = "yellow";
+						contextS.fillRect(moveX, (moveY + spacingY)-highlightHeight, highlightWidth, highlightHeight); //for complementary strand 
 							
-							//draws rectangle where complementary subString characters will be drawn
-							contextS.fillStyle = "yellow";
-							contextS.fillRect(canvasPosX + (spacingX*pullBack), (canvasPosY + spacingY)-spacingX, 27, 10); //for complementary strand 
-							
-							//debug
-							alert("I drew the boxes for ths first line instance");
-						}
-					
-						//if current character looking at is not on first line
-						else if (w > 93)
-						{
-							//x coordinate of current character
-							//var findX = ((w-93)*spacingX)+canvasPosX; //not working
-							
-							//debug
-							alert("I've found an instance on line 2 or later.");
-							
-							//draws rectangle where subString characters will be drawn
-							contextS.fillStyle = "cyan";
-							contextS.fillRect(((w-93)*spacingX)+canvasPosX, canvasPosY-spacingX, 27, 10); //for original strand; x, y (upper left), width, height
-							
-							//draws rectangle where complementary subString characters will be drawn
-							context.fillStyle = "yellow";
-							contextS.fillRect(((w-93)*spacingX)+canvasPosX, (canvasPosY+spacingY)-spacingX, 27, 10);
-							
-							//debug
-							alert("I drew the boxes for this 2nd line or later instance.");
-						}
-						//document.write("<span style=\"font-size: 200%\"> &lt;"); // &lt; = <
+						//increments startPos to find next instance
 						startPos++;
 					}
 					
@@ -211,39 +175,23 @@
 					//if gets to edge of canvas, will have to adjust y as well
 					//sets fillStyle back to black in case a rectangle had to be drawn
 					contextS.fillStyle = "black";
-					contextS.fillText(bigArray[w], canvasPosX + (spacingX*pullBack), canvasPosY);
-					
+					contextS.fillText(bigArray[w], moveX, moveY);
 					
 					//draws complementary character below
-					contextS.fillText(compArray[w], canvasPosX + (spacingX*pullBack), canvasPosY + spacingY);
+					contextS.fillText(compArray[w], moveX, moveY + spacingY);
 					
 					//increments pullBack as w increments
 					pullBack++;
 					
-					/*
-					//continues writing out characters in the generated sequence
-					document.write(bigArray[w]);
-					
-					//if the current character's index value matches the end position
-					if (w == posFound[startPos] + (subLength-1))
-					{
-						document.write("&gt;</span>"); //&gt; = >
-						startPos++;
-					}
-					*/
-					
 					//moves to new line after 31 codons (93 characters)
 					//resets appropriate variable to original values (pullBack)
-					//moves y position to be further down canvas
+					//moves y position to be further down canvas for next line
 					if ((w+1)%93 == 0)
 					{
 						pullBack = 0;
-						canvasPosY = canvasPosY + (spacingY * 5);
-						
-						//document.writeln("<br />");
+						moveY = moveY + spacingLineGap;
 					}
 				}
-				//document.writeln("<br />");
 			}
 		</script>
 	</head>
@@ -271,7 +219,7 @@
 				style="border:1px solid black;"> </canvas>
 		
 		<script>
-			//draws generated sequence with markers to show where sub-string instances are
+			//draws generated sequence with highlight boxes to show where sub-string instances are
 			drawFound();
 		</script>
 	</body>
