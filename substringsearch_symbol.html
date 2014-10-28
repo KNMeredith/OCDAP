@@ -8,7 +8,7 @@
 			var resEnzyme = prompt("Please type the restriction enzyme you would like to use:"); //holds enzyme to be used
 			var subString = ""; //holds sequence to be found
 			var subArray = []; //converts String to String array
-			var subLength = subArray.length; //length of subArray
+			var subLength = 0; //length of subArray; used to be set as subLength = subArray.length here
 			
 			var bluntCut = true; //if bluntCut=true, enzyme produces blunt ends; if bluntCut=false, enzyme produces sticky ends
 			var beginCutIndex = 0; //index within subArray where beginning of cut made
@@ -50,7 +50,7 @@
 				{
 					subString = "agct";
 					bluntCut = true;
-					beginCutIndex = 2; //cut begins after 2nd character/base -> just before 3rd character (index 2)
+					beginCutIndex = 2; //cut begins after 2nd character/base -> just before 3rd character (index 2)				
 				}
 				
 				else if (resEnzyme == "TaqI")
@@ -58,7 +58,6 @@
 					subString = "tcga";
 					bluntCut = false; 
 					beginCutIndex = 1; //cut begins after 1st character/base of subString (t)
-					endCutIndex = subLength - 1; //cut ends just before last character/base of complementary (t)
 				}
 				
 				//enzyme not valid
@@ -68,7 +67,15 @@
 				}
 				
 				//converts subString to array of characters
-				subArray = subString.split(""); 
+				//sets subLength equal to number of characters in subArray
+				subArray = subString.split("");
+				subLength = subArray.length;
+				
+				//only needed for bluntCut = false, but wasn't working when inside that portion b/c subLength hadn't been updated yet
+				endCutIndex = subLength - 1; //cut ends just before last character/base of complementary (t)
+				
+				//set highlightWidth
+				highlightWidth = (subLength*10)-3;
 			}
 			
 			//generates bigString and compString 
@@ -132,16 +139,10 @@
 				//looks through all 459 characters
 				for (i=0; i<(bigNum-subLength); i++) //make sure i+j not off array length
 				{
-					//debug
-					alert("I'm looking through all 459 characters"); //this is being called
-					
 					var looking = true;
 					//looks through all subString characters
 					for (j=0; j<subLength && looking; j++)
 					{
-						//debug
-						alert("I'm looking through the subArray"); // this loop is not being called!
-						
 						//if current character does not match character in subArray
 						if (bigArray[i+j] != subArray[j]) {looking = false;}
 					}
@@ -157,7 +158,7 @@
 				//if no instances of the cut site are found in the generated sequence
 				if (posFound.length == 0)
 				{
-					document.writeln("Your chosen enzyme " + resEnzyme + " cannot make any cuts in this sequence.");
+					document.writeln("Your chosen enzyme " + resEnzyme + " cannot make any cuts in this sequence. <br /> <br />");
 				}
 			}
 			
@@ -165,26 +166,35 @@
 			//displays subString and its instances indexes
 			function displayArrays()
 			{
-				document.writeln("Your restriction enzyme: " + resEnzyme + "<br />");
+				document.writeln("Your restriction enzyme: <br />" + resEnzyme + "<br /> <br />");
 			
 				document.writeln("Your cut site:<br />");
 				
 				//goes through length of subArray[]
 				for (h=0; h<subLength; h++)
 				{
-					//debug
-					alert("I'm writing the cut site out");
 					document.write(subArray[h]);
 				}
 				document.writeln("<br /><br />"); 
 				
 				document.writeln("Instances of cut site found at indexes:<br />");
 				
-				//goes through length of posFound[]
-				for (h=0; h<count; h++)
+				//if one or more instances of the subString were found
+				if (count > 0)
 				{
-					document.write(posFound[h] + "&nbsp;&nbsp;&nbsp;"); //&nbsp; = space
+					//goes through length of posFound[]
+					for (h=0; h<count; h++)
+					{
+						document.write(posFound[h] + "&nbsp;&nbsp;&nbsp;"); //&nbsp; = space
+					}
 				}
+				
+				//if no instances of the subString are found
+				else
+				{
+					document.write("No instances of the subString were found in the sequence below.");
+				}
+				
 				document.writeln("<br /><br />");
 			}
 	
@@ -224,17 +234,97 @@
 						//if enzyme used produces blunt ends
 						if (bluntCut == true)
 						{
-							contextS.moveTo(subArray[beginCutIndex].moveX, subArray[beginCutIndex].moveY);
-							contextS.lineTo(subArray[beginCutIndex].moveX, subArray[beginCutIndex].moveY + spacingY);
+							//draws vertical line
+							
+							//debug
+							alert("I'm drawing a vertical line!");
+							
+							contextS.beginPath();
+							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
+							contextS.lineTo((beginCutIndex*spacingX) + moveX, moveY + (2*spacingY));
 							contextS.stroke();
+							
+							//debug
+							alert("I drew a vertical line!");
+							
+							//draws upper arrowhead
+							
+							//debug
+							alert("I'm drawing an upper arrowhead!");
+							alert("moveX: " + moveX + " and moveY: " + moveY);
+							
+							contextS.fillStyle = "gray";
+							contextS.beginPath();
+							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY - (spacingY/2));
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY - (spacingY/2));
+							contextS.closePath();
+							contextS.fill();
+							
+							//debug
+							alert("I drew an upper arrowhead!");
+							
+							//draws lower arrowhead
+							
+							//debug
+							alert("I'm drawing a lower arrowhead!");
+							alert("moveX: " + moveX + " and moveY: " + moveY);
+							
+							contextS.fillStyle = "gray";
+							contextS.beginPath();
+							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY + (2*spacingY));
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY + (spacingY*1.5));
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY + (spacingY*1.5));
+							contextS.closePath();
+							contextS.fill();
+							
+							//debug
+							alert("I drew a lower arrowhead!");
 						}
 						
 						//if enzyme used produces sticky ends
 						else
 						{
-							contextS.moveTo(subArray[beginCutIndex].moveX, subArray[beginCutIndex].moveY + spacingY/2);
-							contextS.lineTo(subArray[endCutIndex].moveX, subArray[endCutIndex].moveY + spacingY/2);
+							//draws sticky cut
+							contextS.fillStyle = "gray";
+							contextS.beginPath();
+							//first vertical line
+							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
+							//horizontal line; same y, different x
+							contextS.lineTo((beginCutIndex*spacingX) + moveX, moveY + (spacingY/3));
+							contextS.lineTo((endCutIndex*spacingX) + moveX, moveY + (spacingY/3));
+							//second vertical line; same x as point before, different y
+							contextS.lineTo((endCutIndex*spacingX) + moveX, moveY + (2*spacingY));
 							contextS.stroke();
+							
+							//draws upper arrowhead -> *SAME FOR BOTH BLUNT AND STICKY* -> outside loop?
+							//debug
+							alert("I'm drawing an upper arrowhead!");
+							alert("moveX: " + moveX + " and moveY: " + moveY);
+							
+							contextS.fillStyle = "gray";
+							contextS.beginPath();
+							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY - (spacingY/2));
+							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY - (spacingY/2));
+							contextS.closePath();
+							contextS.fill();
+							
+							//draws lower arrowhead -> *DIFFERENT FOR STICKY*
+							//debug
+							alert("I'm drawing a lower arrowhead!");
+							alert("moveX: " + moveX + " and moveY: " + moveY);
+							
+							contextS.fillStyle = "gray";
+							contextS.beginPath();
+							contextS.moveTo((endCutIndex*spacingX) + moveX, moveY + (2*spacingY));
+							contextS.lineTo(((endCutIndex*spacingX) + moveX) - (spacingX/2), moveY + (spacingY*1.5));
+							contextS.lineTo(((endCutIndex*spacingX) + moveX) + (spacingX/2), moveY + (spacingY*1.5));
+							contextS.closePath();
+							contextS.fill();
+							
+							//debug
+							alert("I drew a lower arrowhead!");
 						}
 							
 						//increments startPos to find next instance
