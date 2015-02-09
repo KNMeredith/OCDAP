@@ -1,4 +1,3 @@
-//hi?
 	window.onerror = errorHandler;
 	function errorHandler( msg, url, ln )
    {
