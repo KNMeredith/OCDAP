@@ -40,6 +40,8 @@
 			var highlightWidth = (subLength*10)-3; //width of rectangle depends on how long subString is
 			var highlightHeight = 10; //assuming each character is about 10px high
 			
+			var contextS; //use to get CanvasRenderingConext2D -> needed to draw
+			
 			//sets subArray and bluntCut depending on what user typed in
 			//if enzyme not valid, will report so -> how to make it so redoes it? reload page?
 			function selectSite()
@@ -206,7 +208,7 @@
 				var canvasS = document.getElementById('searchCanvas');
 			
 				//use to get CanvasRenderingConext2D -> needed to draw
-				var contextS = canvasS.getContext('2d');
+				contextS = canvasS.getContext('2d');
 			
 				//string containing font style, size and family
 				//style = normal(default), italic, or bold
@@ -235,51 +237,16 @@
 						if (bluntCut == true)
 						{
 							//draws vertical line
-							
-							//debug
-							alert("I'm drawing a vertical line!");
-							
 							contextS.beginPath();
 							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
 							contextS.lineTo((beginCutIndex*spacingX) + moveX, moveY + (2*spacingY));
 							contextS.stroke();
 							
-							//debug
-							alert("I drew a vertical line!");
-							
 							//draws upper arrowhead
-							
-							//debug
-							alert("I'm drawing an upper arrowhead!");
-							alert("moveX: " + moveX + " and moveY: " + moveY);
-							
-							contextS.fillStyle = "gray";
-							contextS.beginPath();
-							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY - (spacingY/2));
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY - (spacingY/2));
-							contextS.closePath();
-							contextS.fill();
-							
-							//debug
-							alert("I drew an upper arrowhead!");
+							drawUpperArrowhead((beginCutIndex*spacingX) + moveX, moveY - (spacingY/1.5));
 							
 							//draws lower arrowhead
-							
-							//debug
-							alert("I'm drawing a lower arrowhead!");
-							alert("moveX: " + moveX + " and moveY: " + moveY);
-							
-							contextS.fillStyle = "gray";
-							contextS.beginPath();
-							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY + (2*spacingY));
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY + (spacingY*1.5));
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY + (spacingY*1.5));
-							contextS.closePath();
-							contextS.fill();
-							
-							//debug
-							alert("I drew a lower arrowhead!");
+							drawLowerArrowhead((beginCutIndex*spacingX) + moveX, moveY + (1.5*spacingY));
 						}
 						
 						//if enzyme used produces sticky ends
@@ -297,34 +264,11 @@
 							contextS.lineTo((endCutIndex*spacingX) + moveX, moveY + (2*spacingY));
 							contextS.stroke();
 							
-							//draws upper arrowhead -> *SAME FOR BOTH BLUNT AND STICKY* -> outside loop?
-							//debug
-							alert("I'm drawing an upper arrowhead!");
-							alert("moveX: " + moveX + " and moveY: " + moveY);
+							//draws upper arrowhead
+							drawUpperArrowhead((beginCutIndex*spacingX) + moveX, moveY - (spacingY/1.5));
 							
-							contextS.fillStyle = "gray";
-							contextS.beginPath();
-							contextS.moveTo((beginCutIndex*spacingX) + moveX, moveY - spacingY);
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) - (spacingX/2), moveY - (spacingY/2));
-							contextS.lineTo(((beginCutIndex*spacingX) + moveX) + (spacingX/2), moveY - (spacingY/2));
-							contextS.closePath();
-							contextS.fill();
-							
-							//draws lower arrowhead -> *DIFFERENT FOR STICKY*
-							//debug
-							alert("I'm drawing a lower arrowhead!");
-							alert("moveX: " + moveX + " and moveY: " + moveY);
-							
-							contextS.fillStyle = "gray";
-							contextS.beginPath();
-							contextS.moveTo((endCutIndex*spacingX) + moveX, moveY + (2*spacingY));
-							contextS.lineTo(((endCutIndex*spacingX) + moveX) - (spacingX/2), moveY + (spacingY*1.5));
-							contextS.lineTo(((endCutIndex*spacingX) + moveX) + (spacingX/2), moveY + (spacingY*1.5));
-							contextS.closePath();
-							contextS.fill();
-							
-							//debug
-							alert("I drew a lower arrowhead!");
+							//draws lower arrowhead
+							drawLowerArrowhead((endCutIndex*spacingX) + moveX, moveY + (1.5*spacingY));
 						}
 							
 						//increments startPos to find next instance
@@ -352,6 +296,32 @@
 						moveY = moveY + spacingLineGap;
 					}
 				}
+			}
+			
+			//draws upper triangle for cut site
+			function drawUpperArrowhead(lowX, lowY)
+			{
+				//draws lower arrowhead
+				contextS.fillStyle = "gray";
+				contextS.beginPath();
+				contextS.moveTo(lowX, lowY);
+				contextS.lineTo(lowX - (spacingX/2), lowY - (spacingY/2));
+				contextS.lineTo(lowX + (spacingX/2), lowY - (spacingY/2));
+				contextS.closePath();
+				contextS.fill();
+			}
+			
+			//draws lower triangle for cut site
+			function drawLowerArrowhead(lowX, lowY)
+			{
+				//draws lower arrowhead
+				contextS.fillStyle = "gray";
+				contextS.beginPath();
+				contextS.moveTo(lowX, lowY);
+				contextS.lineTo(lowX - (spacingX/2), lowY + (spacingY/2));
+				contextS.lineTo(lowX + (spacingX/2), lowY + (spacingY/2));
+				contextS.closePath();
+				contextS.fill();
 			}
 		</script>
 	</head>
