@@ -1,7 +1,8 @@
 <html>
+<!-- Actual page to be viewed is coded at bottom of file -->
 	<head>
 		<script src="error.js"> </script>
-		<!--<script src="jquery-2.1.1.min.js"> </script>-->
+		<script src="jquery-1.11.2.js"> </script>
 		<title> OCDAP SubStringSearch Practice: Web Data Retrieval </title>
 		<script>
 			//attribute list from eclipse java file
@@ -112,13 +113,13 @@
 		
 			<?php
 				//for now, you need to already know gene ID #
-				//prompt to type gene ID # in -> puts in preset url code to get file data
-				//stores relevant sequence as string (bigString)
+				//prompt to type gene ID # in -> puts in preset url code to get file data from NCBI
+				//stores relevant sequence from NCBI as string (bigString)
 				//converts that string to array (bigArray)
 				//sets bigLength
 				function getSequence()
 				{
-					//need to ave global in front so it knows these variable refer to previously defined ones in earlier php
+					//need to have global in front so it knows these variable refer to previously defined ones in earlier php
 					global $canvasPosY;
 					global $canvasHeight;
 					global $codonNumLine;
@@ -133,7 +134,7 @@
 					//selects "complete cds" and sequence from the data and stores it as a string
 					$rawSequence = stristr( $rawContent, "complete cds" );
 					
-					//separates $rawSequence into an array of characters ($rawArray)
+					//separates $rawSequence into an array of characters by lines($rawArray)
 					$rawArray = explode("\n", $rawSequence);
 					
 					$i=0;  //local php variable to count through lines in sequence
