@@ -8,6 +8,7 @@
 	}
 
 	$enzymeList = array();
+	global $enzymeList;
 	
 	//counter to track index use in array
 	$enzymeCount = 0;
@@ -16,12 +17,109 @@
 	//creates new enzyme object in $enzymeList array
 	function addEnzyme($n, $cs)
 	{
+		//echo "name is $n, cutsite is $cs";
+		
 		global $enzymeCount;
-		$enzymeList[$enzymeCount] = new Enzyme;
-		$enzymeList[$enzymeCount] => $name = $n;
-		$enzymeList[$enzymeCount] => $cutSite = $cs;
+		global $enzymeList;
+		
+		//using a smaller variable name so it doesn't get confused
+		$e = new Enzyme;
+		$e -> name = $n;
+		$e -> cutSite = $cs;
+		
+		$enzymeList[$enzymeCount] = $e;
 		
 		$enzymeCount++;
+	}
+	
+	function enzymeMenu()
+	{
+		global $enzymeCount;
+		global $enzymeList;
+		
+		echo "<select>\n";
+		
+		//goes through all the enzymes
+		for ($i=0; $i<$enzymeCount; $i++)
+		{
+			$e = $enzymeList[$i];
+			
+			//sets as true (funny characters in the cut site) or false (no funny characters in the cut site)
+			$funnyStatus = findFunny($e->cutSite);
+			
+			//need to check if enzyme cutsite has funny stuff in it other than apostrophes
+			if ($funnyStatus == false)
+			{
+				//if no funny characters are in the cut site, can present it as an option in the drop down menu
+				echo "<option value=".$i.">".$e->name."</option>\n";
+			}
+		}
+		
+		echo "</select>\n";
+	}
+	
+	//check current enzyme to see if has funny characters
+	//return true if have funny characters, false if not
+	function findFunny($cutInfo)
+	{
+		//not looking for _ right now
+		//we want to look for these characters
+		$funnyList = ();
+		$funnyList[0] = "r";
+		$funnyList[1] = "y";
+		$funnyList[2] = "m";
+		$funnyList[3] = "k";
+		$funnyList[4] = "s";
+		$funnyList[5] = "w";
+		$funnyList[6] = "b";
+		$funnyList[7] = "d";
+		$funnyList[8] = "h";
+		$funnyList[9] = "v";
+		$funnyList[10] = "n";
+		
+		//stores length of funnyList, should be 11
+		$funnyListLength = $funnyList.length;
+		
+		//goes through all the funny characters and looks for the first instance of them in the cut site
+		for ($i=0; $i<$funnyListLength; $i++)
+		{
+			$f = $funnyList[$i];
+			//looks for first instance of current funny character
+			$funnyPos = strpos($cutInfo, $f);
+			
+			if ($funnyPos !== false)
+			{
+				//if the current funny character is in the cut site, return true
+				return true;
+				//breaks the loop because once a funny character has been found, don't need to look at the other ones
+				break;
+			}
+			
+			else
+			{
+				//if the current funny character isn't found in the cut site, return false;
+				//could probably put this part outside of the for loop
+				return false;
+			}
+		}
+		
+		//not looking for _ right now
+		//$numFunnyChar = strspn($cutInfo,"rymkswbdhvn");
+		/*
+		echo "funnyChar = ".$funnyChar." ";
+		echo "cutsite is ".$cutInfo." ";
+		*/
+		/*
+		if ($funnyStatus != 0)
+		{
+			return true;
+		}
+		
+		else
+		{
+			return false;
+		}
+		*/
 	}
 	
 	addEnzyme("AarI", "CACCTGCnnnn'nnnn_");
@@ -701,5 +799,4 @@
 	addEnzyme("ZhoI", "AT'CG_AT");
 	addEnzyme("ZraI", "GAC'GTC");
 	addEnzyme("Zsp2I", "A_TGCA'T");
-
 ?>
