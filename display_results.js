@@ -11,7 +11,7 @@
 		//goes through length of subArray[]
 		for (h=0; h<subLength; h++)
 		{
-			document.write(subArray[h]);
+			document.write(subArray[h]); //writes the current character of the loop
 		}
 		document.writeln("<br /><br />"); 
 		
@@ -24,14 +24,15 @@
 			for (h=0; h<count; h++)
 			{
 				document.write(posFound[h] + "&nbsp;&nbsp;&nbsp;"); //&nbsp; = space
+																	//writes the current position of the loop
 			}
 		}
 		
 		//if no instances of the subString are found
 		else
 		{
+			//tells the user the enzyme could not cut anywhere in the DNA sequence
 			document.writeln("No instances of the subString were found in the sequence below.");
-			//document.write("count equals"+count);
 		}
 		
 		document.writeln("<br /><br />");
@@ -91,7 +92,7 @@
 				contextS.fillRect(moveX, (moveY + spacingY)-highlightHeight, highlightWidth, highlightHeight); //for complementary strand 
 				
 				//if enzyme used produces blunt ends
-				if (bluntCut == true)
+				if (bluntCut == 1)
 				{
 					//draws vertical line
 					contextS.beginPath();

@@ -44,5 +44,6 @@
 		//convert String of letters (compString) to String array (compArray)
 		compArray = compString.split("");
 		
+		//sets javascript variable compArray to compArray created here
 		return compArray;
 	}

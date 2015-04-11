@@ -1,0 +1,49 @@
+OCDAP To-Do List:
+
+-NCBI integration within OCDAP’s webpage
+
+	-Create a window within OCDAP’s webpage that allows users to search through the NCBI database without 
+	 leaving or going to a different page.
+
+	-Once the user finds the desired DNA sequence, they could click a button that makes OCDAP retrieve the 
+	 pertinent information from the page. Knowing the gene ID beforehand would not be necessary.
+
+
+-More convenient visualization
+
+	-Create a left-hand section that would follow as the screen is scrolled up or down. The information 
+	 would include the selected restriction enzyme’s name and cut site information, the name of the 
+	 selected gene from NCBI, and the number of times the enzyme can cut in the selected gene. 
+	
+	-Incorporate information boxes that appear as you hover over an individual restriction site. This 
+	 information box would display the position of the restriction site within the gene and what kind 
+	 of cut it is. 
+
+
+-Multiple restriction enzymes at once
+
+	-Modify the code so that multiple restriction enzymes can be selected at once. In this case, the names 
+	 of the enzymes would be listed above their respective restriction sites, but clicking on the name of 
+	 the enzyme would bring up the same kind of information box that the hover box would depending on the 
+         enzyme the user clicked.
+
+	-Other ways of displaying info about mutliple enzymes?
+
+
+-Create a way for users to manipulate or edit the visualization
+
+	-Create tools for user to visually manipulate the DNA display results on the screen since finding the 
+	 restriction sites is only part of what a researcher has to account for in restriction mapping 
+	 (promoter regions, etc.).
+
+-Cookies for local memory
+
+	-By using cookies, the browser on the user’s local computer could remember what the user searched for 
+	 most recently. Users could then come back to the page having not lost their progress.
+
+
+-Integrate more restriction enzymes
+
+	-Some enzymes have been excluded from the menu due to IUPAC code, but these enzymes need to be 
+	 included. Different functions need to be made to accommodate for these enzymes.
+

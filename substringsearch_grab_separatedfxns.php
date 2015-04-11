@@ -1,100 +1,107 @@
 <?php
+	//php function files needed
+	include ("clean_cutsite.php");
 	include ("get_sequence.php");
 ?>
 
 <html>
+<!-- Main page from which functions are called -->
 <!-- Actual page to be viewed is coded at bottom of file -->
 	<head>
+		<!-- javascript function files needed-->
 		<script src="error.js"> </script>
 		<script src="jquery-1.11.2.js"> </script>
 		<script src="select_find_cutsites.js"></script>
 		<script src="make_comp.js"></script>
 		<script src="display_results.js"></script>
 		
-		<title> OCDAP SubStringSearch Practice: Web Data Retrieval </title>
+		<title> OCDAP Restriction Map </title>
 		<script>
-			//attribute list from eclipse java file
+			//attribute list
 			var resEnzyme = ""; //holds name of enzyme to use
 			
-			var subArray = []; //converts String to String array
-			var subLength = 0; //length of subArray; used to be set as subLength = subArray.length here
+			var startString = ""; //holds the initial cut site info sent from the form; contains "'"'s and "_"'s
+			var subString = ""; //holds the "cleaned up" version of startString; does NOT contain "'"'s or "_"'s
+			var subArray = []; //stores each character contained within subString as an array
+			var subLength = 0; //holds how many indexes/characters subArray contains
 			
-			var bluntCut = true; //if bluntCut=true, enzyme produces blunt ends; if bluntCut=false, enzyme produces sticky ends
-			var beginCutIndex = 0; //index within subArray where beginning of cut made
-			var endCutIndex = 0; //index w/in subArray where end of cut made; only needed if bluntCut = false
+			var bluntCut = 1; //if bluntCut = 1, enzyme produces blunt ends; if bluntCut = 0, enzyme produces sticky ends
+			var beginCutIndex = 0; //index within subArray where beginning of cut is made
+			var endCutIndex = 0; //index within subArray where end of cut made; different from beginCutIndex only if bluntCut = 0
 			
-			var bigString = ""; //holds String version of generated letters
-			var bigArray = []; //holds randomly generated characters; find subString in here
-			var bigLength = 0; //how long bigArray is
+			var bigString = ""; //holds String version of the desired DNA/gene sequence
+			var bigArray = []; //stores each character of bigString as an array; will search for subString in here
+			var bigLength = 0; //holds how many indexes/characters bigArray contains
 			
-			var compArray = []; //holds complementary characters
+			var compArray = []; //holds complementary characters (generated from desired gene sequence)
 			
 			var posFound = []; //posFound[i] is the ith occurence of subString
 			var count = 0; //number of times subString found
 
 		<?php
-			//stores enzyme name the user entered into local php variable
-			$resEnzyme = addslashes( $_POST['resEnzyme'] );
+			//splits combined version of enzyme name and its cute site info selected into local php array variable
+			$enzymeInfo = explode("|", $_POST['resEnzyme'] );
+			//sets local php variables to either enzyme name or cut site info
+			$startString = $enzymeInfo[0];
+			$resEnzyme = $enzymeInfo[1];
 			
-			//sets javascript variable resEnzyme to the string stored in the php variable $resEnzyme=
+			//sets javascript variable resEnzyme to the string stored in the php variable $resEnzyme
+			//sets javascript variable startString to the string stored in the php variable $startString
 			echo "resEnzyme=\"".$resEnzyme."\";\n";
+			echo "startString=\"".$startString."\";\n";
 		
 			//stores gene ID the user entered into local php variable $geneID
 			$geneID = addslashes( $_POST['geneID'] );
+			
+			//sets javascript variable geneID to the string stored in the php variable $geneID
 			echo "geneID=\"".$geneID."\";\n";
 		?>	
 		</script>
 	</head>
 	
 	<body>
-		<h1>OCDAP SubStringSearch Practice </h1>
+		<h1>OCDAP Restriction Map </h1>
 		
 		<script>
-			//based on what enzyme typed in, decides what subString is and stores it
-			var enzymeInfo = new selectSite(resEnzyme);
-			subArray = enzymeInfo[0];
-			subLength = enzymeInfo[1];
-			bluntCut = enzymeInfo[2];
-			beginCutIndex = enzymeInfo[3];
-			endCutIndex = enzymeInfo[4];
-			highlightWidth = enzymeInfo[5];
-		
-			//fxn from get_sequence.php
-			//define bigArray as DNA sequence
-			//bigLength is the length of the DNA sequence
-			<?php 
-				//gets sequence from NCBI
-				//writes javascript that stores sequence into bigArray
+			<?php
+				//calls cleanCutSite fxn in clean_cutsite.php file
+				//finds and sets javascript values for subString, subLength, beginCutIndex, endCutIndex, highlightWidth, and bluntCut
+				//must send the startString as a parameter
+				cleanCutSite($startString);
+		 
+				//calls getSequence fxn in get_sequence.php file
+				//retrieves gene sequence info from NCBI
+				//finds and sets javascript values for bigString, bigArray, and bigLength
+				//must send the geneID as a parameter
 				getSequence($geneID); 
-				
-				//echo bigLength . "\n";
 			?>
 			
-			//fxn from make_comp.js
-			//creates compArray from bigArray
+			//calls makeComp fxn from make_comp.js
+			//creates and sets an array object of nucleotides (compArray) that are complementary to those from bigArray
+			//must send bigArray and bigLength as parameters
 			compArray = new makeComp(bigArray, bigLength);
-			/*
-			for (i=0; i<bigLength; i++)
-			{
-				document.write(compArray[i]);
-			}
-			document.write("<br/>\n");
-			*/
 			
-			//fxn from select_find_cutsites.js
-			//looks thru bigArray for all instances of subArray
+			//update subArray to hold all the characters within subString
+			subArray = subString.split("");
+			
+			//calls findSubString fxn from select_find_cutsites.js
+			//looks through bigArray for all instances of subArray
 			//stores starting index values of subString locations in indexFound[]
+			//must send subArray, bigLength, and subLength as parameters
 			posFound = new findSubString(subArray, bigLength, subLength);
+			
+			//updates count to the length of posFound (the number of times subString was found)
 			count = posFound.length;
 			
-			//fxn from display_results.js
-			//displays subString and its instances indexes
+			//calls displayArrays from display_results.js
+			//displays subString and its instances' indexes
+			//must send resEnzyme, subLength, subArray, posFound, and count as parameters
 			displayArrays(resEnzyme, subLength, subArray, posFound, count);
 		</script>
 		
 		<!--separated fxns out so canvas would be made after document.write info, but before stuff actually want to draw-->
 		<!--create canvas-->
-		<!--border not required, but nice to see where it is for practice purposes-->
+		<!--border not required, but nice to see where it is to see size of canvas-->
 		<?php
 			$spacingY=30; //amount of space in pixels b/w characters in original string versus complementary string
 			$characterHeight=13; //assuming every character is about 13 pixels high
@@ -123,12 +130,14 @@
 			//add $canvasPosY to account for space taken up by text "Edited sequence:" (see drawFound())
 			$canvasHeight = round($canvasPosY+(($rawLength/$codonNumLine)*$totalLineHeight)); 
 			
+			//creates the canvas in javascript
 			echo "<canvas id=\"searchCanvas\" width=\"1000\" height=\"".$canvasHeight."\" style=\"border:1px solid black;\"> </canvas>";
 		?>
 		
 		<script>
-			//fxn from display_results.js
+			//calls the drawFound fxn from display_results.js
 			//draws generated sequence with highlight boxes and cuts to show where cut sites are
+			//must send bigLength, posFound, bluntCut, beginCutIndex, endCutIndex, bigArray, and compArray as parameters
 			drawFound(bigLength, posFound, bluntCut, beginCutIndex, endCutIndex, bigArray, compArray);
 		</script>
 	</body>

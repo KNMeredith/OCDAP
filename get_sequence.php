@@ -7,21 +7,15 @@
 	function getSequence($geneID)
 	{
 		//need to have global in front so it knows these variable refer to previously defined ones in earlier php
-		/*
-		global $canvasPosY;
-		global $canvasHeight;
-		global $codonNumLine;
-		global $totalLineHeight;
-		*/
 		global $rawLength;
 		
-		//uses geneID to get FASTA file web page text for desired organism
+		//uses geneID to get FASTA file web page text for desired organism/gene
 		$rawContent = file_get_contents("http://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?tool=portal&sendto=on&log$=seqview&db=nuccore&dopt=fasta&val=".$geneID."&extrafeat=0&maxplex=1");
 		
-		//selects "complete cds" and sequence from the data and stores it as a string
+		//selects "complete cds" and sequence from the data -> stores it as a string
 		$rawSequence = stristr( $rawContent, "complete cds" );
 		
-		//separates $rawSequence into an array of characters by lines($rawArray)
+		//separates $rawSequence into an array of characters by lines ($rawArray)
 		$rawArray = explode("\n", $rawSequence);
 		
 		$i=0;  //local php variable to count through lines in sequence
@@ -32,14 +26,16 @@
 		{
 			//sets javascript variable bigString to the character $line is currently assigned to
 			if ($i>0)
-			{echo "bigString += \"".$line."\";\n";}
+			{echo "bigString += \"".$line."\";\n";} //update javascript value of bigString
 			
+			//increase the counter
 			$i++;
+			
 			$rawLength += strlen($line); //updates $rawLength's value after every iteration
 		}
 		
 		//converts bigString to array of characters (bigArray)
-		//sets bigLength to length of bigArray
+		//sets javascript variables bigLength to length of bigArray
 		echo "bigArray = bigString.split(\"\");";
 		echo "bigLength = bigArray.length;";
 	}

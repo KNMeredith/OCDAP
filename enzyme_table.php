@@ -32,12 +32,13 @@
 		$enzymeCount++;
 	}
 	
+	//adds enzyme names to the OCDAP submit form
 	function enzymeMenu()
 	{
 		global $enzymeCount;
 		global $enzymeList;
 		
-		echo "<select>\n";
+		echo "<select name=\"resEnzyme\" >\n";
 		
 		//goes through all the enzymes
 		for ($i=0; $i<$enzymeCount; $i++)
@@ -51,20 +52,21 @@
 			if ($funnyStatus == false)
 			{
 				//if no funny characters are in the cut site, can present it as an option in the drop down menu
-				echo "<option value=".$i.">".$e->name."</option>\n";
+				echo "<option value=\"".$e->cutSite."|".$e->name."\">".$e->name."</option>\n";
 			}
 		}
 		
 		echo "</select>\n";
 	}
-	
+?>
+<?php
 	//check current enzyme to see if has funny characters
 	//return true if have funny characters, false if not
 	function findFunny($cutInfo)
 	{
 		//not looking for _ right now
 		//we want to look for these characters
-		$funnyList = ();
+		$funnyList = [];
 		$funnyList[0] = "r";
 		$funnyList[1] = "y";
 		$funnyList[2] = "m";
@@ -77,51 +79,38 @@
 		$funnyList[9] = "v";
 		$funnyList[10] = "n";
 		
-		//stores length of funnyList, should be 11
-		$funnyListLength = $funnyList.length;
+		//holds value to return
+		//assume is false unless set otherwise
+		$ret = false;
+		
+		//stores length of funnyList, should be 11 right now (excludes _ and ')
+		$funnyListLength = count($funnyList);
 		
 		//goes through all the funny characters and looks for the first instance of them in the cut site
-		for ($i=0; $i<$funnyListLength; $i++)
+		//loop only occurs if: 
+		//1)hasn't gone through whole length of $funnyList
+		//2)$ret hasn't been set to true yet; if it has, no need to look further into the current cut site
+		for ($i=0; !$ret && $i<$funnyListLength; $i++)
 		{
+			//stores current funny letter; not necessarily needed
 			$f = $funnyList[$i];
-			//looks for first instance of current funny character
-			$funnyPos = strpos($cutInfo, $f);
 			
+			//looks for first instance of current funny character
+			$funnyPos = stripos($cutInfo, $f);
+			
+			//if an instance of the current funny character has been found
 			if ($funnyPos !== false)
 			{
-				//if the current funny character is in the cut site, return true
-				return true;
-				//breaks the loop because once a funny character has been found, don't need to look at the other ones
-				break;
-			}
-			
-			else
-			{
-				//if the current funny character isn't found in the cut site, return false;
-				//could probably put this part outside of the for loop
-				return false;
+				//sets the return value to true
+				$ret = true;
 			}
 		}
 		
-		//not looking for _ right now
-		//$numFunnyChar = strspn($cutInfo,"rymkswbdhvn");
-		/*
-		echo "funnyChar = ".$funnyChar." ";
-		echo "cutsite is ".$cutInfo." ";
-		*/
-		/*
-		if ($funnyStatus != 0)
-		{
-			return true;
-		}
-		
-		else
-		{
-			return false;
-		}
-		*/
+		//returns the value stored in $ret
+		return $ret;
 	}
 	
+	//adds all the enzymes to be used in the menu
 	addEnzyme("AarI", "CACCTGCnnnn'nnnn_");
 	addEnzyme("AasI", "GACnn_nn'nnGTC");
 	addEnzyme("AatI", "AGG'CCT");
